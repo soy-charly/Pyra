@@ -61,13 +61,6 @@
         "path": "./snippets/pyra.json"
       }
     ],
-    "iconThemes": [
-      {
-        "id": "pyra-icons",
-        "label": "Pyra Icons",
-        "path": "./icons/pyra-icon-theme.json"
-      }
-    ],
     "commands": [
       {
         "command": "pyra.compileFile",

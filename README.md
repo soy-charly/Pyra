@@ -1,7 +1,7 @@
 # Pyra
 
 <p align="center">
-  <img src="Pyra-Logo.png" alt="Pyra logo" width="220">
+  <img src="icons/Pyra-Logo.png" alt="Pyra logo" width="220">
 </p>
 
 Pyra is a small, brace-delimited, Python-inspired compiled language with semicolon-terminated simple statements. Its compiler is written in Rust and emits C++20 as a native backend; Clang or GCC then produces a standalone native executable. Compiled programs do not load or invoke the Pyra compiler, Python, or another interpreter.
@@ -22,7 +22,7 @@ cargo test
 
 The `pyra-language` VS Code extension source is in [`vscode-extension/`](vscode-extension/). It includes syntax highlighting, code snippets, completion, hover documentation, and signature help; see its README for packaging and installation.
 
-Install the compiler to `/usr/local/bin/pyra` with `./scripts/install.sh`.
+Install the compiler to `/usr/local/bin/pyra` with `./scripts/install.sh`. The installer can also install the VS Code extension and its optional Material Icon Theme SVG integration: run `./scripts/install.sh --vscode` to opt in explicitly, or answer the optional prompt when running it interactively. See [`docs/installation.md`](docs/installation.md) for the icon setup.
 
 ## Example
 

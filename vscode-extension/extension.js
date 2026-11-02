@@ -6,6 +6,11 @@ const { registerLanguageFeatures } = require("./language-features");
 const diagnostics = vscode.languages.createDiagnosticCollection("pyra");
 let output;
 
+function provideFileDecoration(uri) {
+  if (path.extname(uri.fsPath).toLowerCase() !== ".pyra") return undefined;
+  return new vscode.FileDecoration("Pyra", "Pyra source file");
+}
+
 function activeSource() {
   const editor = vscode.window.activeTextEditor;
   if (!editor || editor.document.languageId !== "pyra") {
@@ -102,6 +107,7 @@ function activate(context) {
   context.subscriptions.push(
     diagnostics,
     output,
+    vscode.window.registerFileDecorationProvider({ provideFileDecoration }),
     vscode.commands.registerCommand("pyra.compileFile", compileFile),
     vscode.commands.registerCommand("pyra.runExecutable", runExecutable),
     vscode.commands.registerCommand("pyra.checkFile", checkFile)
