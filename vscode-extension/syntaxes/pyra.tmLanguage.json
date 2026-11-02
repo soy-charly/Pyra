@@ -22,17 +22,17 @@
       "endCaptures": {
         "0": {
           "name": "punctuation.section.arguments.end.pyra"
-        },
-        "patterns": [
-          {
-            "include": "#parameters"
-          },
-          {
-            "include": "#expressions"
-          }
-        ]
+        }
       },
-      "end": "\\)"
+      "end": "\\)",
+      "patterns": [
+        {
+          "include": "#parameters"
+        },
+        {
+          "include": "#expressions"
+        }
+      ]
     },
     {
       "include": "#expressions"
@@ -117,7 +117,7 @@
         },
         {
           "name": "punctuation.section.sequence.pyra",
-          "match": "[\\[\\](),:]"
+          "match": "[\\[\\](),:;]"
         },
         {
           "name": "entity.name.function.call.pyra",

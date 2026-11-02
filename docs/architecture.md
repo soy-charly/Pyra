@@ -2,7 +2,7 @@
 
 Pyra's compiler is implemented in Rust with no Rust crate dependencies:
 
-1. The lexer records file/line/column positions and tokenizes delimiters, literals, names, operators, and newlines.
+1. The lexer records file/line/column positions and tokenizes delimiters, literals, names, operators, newlines, and semicolons.
 2. A recursive-descent/Pratt parser builds a typed Rust AST.
 3. Semantic checks validate function declarations/calls and control-flow placement.
 4. The backend emits C++20 source containing the program and a small embedded runtime.

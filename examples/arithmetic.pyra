@@ -1,5 +1,5 @@
-first = 17
-second = 5
-print(first + second)
-print(first / second)
-print(first % second)
+first = 17;
+second = 5;
+print(first + second);
+print(first / second);
+print(first % second);

@@ -1,6 +1,7 @@
 const { execFile } = require("node:child_process");
 const path = require("node:path");
 const vscode = require("vscode");
+const { registerLanguageFeatures } = require("./language-features");
 
 const diagnostics = vscode.languages.createDiagnosticCollection("pyra");
 let output;
@@ -97,6 +98,7 @@ async function runExecutable() {
 
 function activate(context) {
   output = vscode.window.createOutputChannel("Pyra");
+  registerLanguageFeatures(vscode, context);
   context.subscriptions.push(
     diagnostics,
     output,

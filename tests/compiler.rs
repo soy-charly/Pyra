@@ -50,20 +50,20 @@ fn compiles_a_standalone_program_with_functions_and_collections() {
         r#"
 def factorial(number) {
     if number <= 1 {
-        return 1
+        return 1;
     }
-    return number * factorial(number - 1)
+    return number * factorial(number - 1);
 }
-values = [1, 2, 3]
-scores = {"answer": 5}
-total = 0
+values = [1, 2, 3];
+scores = {"answer": 5};
+total = 0;
 for value in values {
-    total += value
+    total += value;
 }
 if total == 6 and scores["answer"] in [5] {
-    print(factorial(5), total, values[-1], values[0:2])
+    print(factorial(5), total, values[-1], values[0:2]);
 } else {
-    print("wrong")
+    print("wrong");
 }
 "#,
     )
@@ -88,7 +88,7 @@ if total == 6 and scores["answer"] in [5] {
 fn supports_syntax_only_object_and_assembly_modes() {
     let directory = TestDirectory::new();
     let source = directory.file("simple.pyra");
-    fs::write(&source, "print(2 + 3)\n").unwrap();
+    fs::write(&source, "print(2 + 3);\n").unwrap();
     assert!(
         pyra(&[OsStrExt::as_os_str("-fsyntax-only"), arg(&source)])
             .status
@@ -126,7 +126,7 @@ fn supports_syntax_only_object_and_assembly_modes() {
 fn reports_source_locations_and_unknown_functions() {
     let directory = TestDirectory::new();
     let source = directory.file("bad.pyra");
-    fs::write(&source, "\nprint(missing_function())\n").unwrap();
+    fs::write(&source, "\nprint(missing_function());\n").unwrap();
     let output = pyra(&[arg(&source)]);
     assert_eq!(output.status.code(), Some(2));
     let stderr = String::from_utf8_lossy(&output.stderr);
@@ -140,7 +140,7 @@ fn checks_short_circuiting_and_runtime_exit_status() {
     let executable = directory.file("short-circuit");
     fs::write(
         &source,
-        "if False and missing_name {\n    print(1)\n}\nprint(True or missing_name)\n",
+        "if False and missing_name {\n    print(1);\n}\nprint(True or missing_name);\n",
     )
     .unwrap();
     let compilation = pyra(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
@@ -156,8 +156,8 @@ fn compiles_multiple_source_files_together() {
     let library = directory.file("math.pyra");
     let program = directory.file("main.pyra");
     let executable = directory.file("multiple");
-    fs::write(&library, "def double(value) {\n    return value * 2\n}\n").unwrap();
-    fs::write(&program, "print(double(21))\n").unwrap();
+    fs::write(&library, "def double(value) {\n    return value * 2;\n}\n").unwrap();
+    fs::write(&program, "print(double(21));\n").unwrap();
     let compilation = pyra(&[
         arg(&program),
         arg(&library),
@@ -183,16 +183,16 @@ fn evaluates_operands_left_to_right_and_compares_types_correctly() {
         &source,
         r#"
 def left() {
-    print("left")
-    return 8
+    print("left");
+    return 8;
 }
 def right() {
-    print("right")
-    return 2
+    print("right");
+    return 2;
 }
-print(left() / right())
-print("1" == 1)
-print(5.5 % 2.0)
+print(left() / right());
+print("1" == 1);
+print(5.5 % 2.0);
 "#,
     )
     .unwrap();
@@ -207,6 +207,33 @@ print(5.5 % 2.0)
     assert_eq!(
         String::from_utf8_lossy(&execution.stdout).trim(),
         "left\nright\n4\nFalse\n1.5"
+    );
+}
+
+#[test]
+fn requires_semicolons_after_simple_statements() {
+    let directory = TestDirectory::new();
+    let source = directory.file("missing-semicolon.pyra");
+    fs::write(&source, "value = 1\nprint(value);\n").unwrap();
+    let output = pyra(&[arg(&source)]);
+    assert_eq!(output.status.code(), Some(2));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains(
+            "missing-semicolon.pyra:1:10: error: expected `;` at the end of the statement"
+        )
+    );
+
+    fs::write(
+        &source,
+        "value = 1;\nif value == 1 {\n    print(value);\n}\n",
+    )
+    .unwrap();
+    let output = pyra(&[OsStrExt::as_os_str("-fsyntax-only"), arg(&source)]);
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
     );
 }
 

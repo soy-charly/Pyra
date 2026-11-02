@@ -7,9 +7,11 @@
   "license": "MIT",
   "files": [
     "extension.js",
+    "language-features.js",
     "language-configuration.json",
     "LICENSE",
     "README.md",
+    "snippets/**",
     "syntaxes/**"
   ],
   "engines": {
@@ -44,6 +46,12 @@
         "language": "pyra",
         "scopeName": "source.pyra",
         "path": "./syntaxes/pyra.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "pyra",
+        "path": "./snippets/pyra.json"
       }
     ],
     "commands": [

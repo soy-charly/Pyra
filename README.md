@@ -1,6 +1,6 @@
 # Pyra
 
-Pyra is a small, brace-delimited, Python-inspired compiled language. Its compiler is written in Rust and emits C++20 as a native backend; Clang or GCC then produces a standalone native executable. Compiled programs do not load or invoke the Pyra compiler, Python, or another interpreter.
+Pyra is a small, brace-delimited, Python-inspired compiled language with semicolon-terminated simple statements. Its compiler is written in Rust and emits C++20 as a native backend; Clang or GCC then produces a standalone native executable. Compiled programs do not load or invoke the Pyra compiler, Python, or another interpreter.
 
 The current implementation is an intentionally small first release. Its supported syntax, runtime model, build requirements, and known gaps are documented in [`docs/language-spec.md`](docs/language-spec.md), [`docs/architecture.md`](docs/architecture.md), and [`docs/installation.md`](docs/installation.md).
 
@@ -15,7 +15,7 @@ cargo test
 ./out/factorial
 ```
 
-The `pyra-language` VS Code extension source is in [`vscode-extension/`](vscode-extension/). See its README for packaging and installation.
+The `pyra-language` VS Code extension source is in [`vscode-extension/`](vscode-extension/). It includes syntax highlighting, code snippets, completion, hover documentation, and signature help; see its README for packaging and installation.
 
 Install the compiler to `/usr/local/bin/pyra` with `./scripts/install.sh`.
 
@@ -24,13 +24,13 @@ Install the compiler to `/usr/local/bin/pyra` with `./scripts/install.sh`.
 ```pyra
 def factorial(n) {
     if n <= 1 {
-        return 1
+        return 1;
     }
-    return n * factorial(n - 1)
+    return n * factorial(n - 1);
 }
 
 for i in range(6) {
-    print(factorial(i))
+    print(factorial(i));
 }
 ```
 

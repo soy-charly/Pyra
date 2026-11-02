@@ -1,0 +1,84 @@
+{
+  "Function definition": {
+    "prefix": "def",
+    "body": [
+      "def ${1:name}(${2:parameters}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Define a top-level Pyra function"
+  },
+  "If / else": {
+    "prefix": "if",
+    "body": [
+      "if ${1:condition} {",
+      "\t$2",
+      "} else {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Conditional with an alternative branch"
+  },
+  "If / elif / else": {
+    "prefix": "ifel",
+    "body": [
+      "if ${1:condition} {",
+      "\t$2",
+      "} elif ${3:other_condition} {",
+      "\t$4",
+      "} else {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Conditional with elif and else branches"
+  },
+  "For loop": {
+    "prefix": "for",
+    "body": [
+      "for ${1:item} in ${2:iterable} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Iterate over a Pyra value"
+  },
+  "For range loop": {
+    "prefix": "forr",
+    "body": [
+      "for ${1:index} in range(${2:count}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Loop over a range of integers"
+  },
+  "While loop": {
+    "prefix": "while",
+    "body": [
+      "while ${1:condition} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Repeat while a condition is true"
+  },
+  "Print": {
+    "prefix": "print",
+    "body": "print(${1:value});$0",
+    "description": "Print a value"
+  },
+  "Input": {
+    "prefix": "input",
+    "body": "input(${1:prompt});$0",
+    "description": "Read a line of input"
+  },
+  "List literal": {
+    "prefix": "list",
+    "body": [
+      "[${1:item}, ${2:item}];$0"
+    ],
+    "description": "Create a list"
+  },
+  "Dictionary literal": {
+    "prefix": "dict",
+    "body": "{\"${1:key}\": ${2:value}};$0",
+    "description": "Create a dictionary"
+  }
+}

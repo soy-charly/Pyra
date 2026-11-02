@@ -1,6 +1,6 @@
 # Pyra language specification (0.1)
 
-Pyra is Python-inspired, not Python-compatible. `.pyra` is the conventional source extension. Blocks use `{` and `}`; indentation is insignificant. A newline or semicolon separates statements outside parentheses and brackets. `#` begins a line comment.
+Pyra is Python-inspired, not Python-compatible. `.pyra` is the conventional source extension. Blocks use `{` and `}`; indentation is insignificant. Every simple statement must end with `;`. Newlines and semicolons separate statements outside parentheses and brackets. Block headers and closing braces do not need a semicolon. `#` begins a line comment.
 
 ## Values and names
 
@@ -11,31 +11,31 @@ Strings use single or double quotes and support `\\`, `\"`, `\'`, `\n`, `\r`, `\
 ## Statements
 
 ```pyra
-value = 2
-value += 3
+value = 2;
+value += 3;
 
 if value > 3 {
-    print("large")
+    print("large");
 } elif value == 3 {
-    print("three")
+    print("three");
 } else {
-    print("small")
+    print("small");
 }
 
 while value > 0 {
-    value -= 1
+    value -= 1;
 }
 
 for item in range(3) {
-    print(item)
+    print(item);
 }
 
 def twice(number) {
-    return number * 2
+    return number * 2;
 }
 ```
 
-Supported statements: expression statements, `=`, `+=`, `-=`, `*=`, `/=`, `%=`, `if`/`elif`/`else`, `while`, `for name in iterable`, function definitions, `return`, `break`, and `continue`. Functions are top-level, have fixed positional parameters, and may recurse. Imports, exceptions, classes, keyword/default arguments, nested functions, and assignment to an indexed element are not supported.
+Supported statements: expression statements, `=`, `+=`, `-=`, `*=`, `/=`, `%=`, `if`/`elif`/`else`, `while`, `for name in iterable`, function definitions, `return`, `break`, and `continue`. Simple statements (expressions, assignments, `return`, `break`, and `continue`) require a trailing `;`; compound statements (blocks and their headers) do not. Functions are top-level, have fixed positional parameters, and may recurse. Imports, exceptions, classes, keyword/default arguments, nested functions, and assignment to an indexed element are not supported.
 
 ## Expressions and precedence
 

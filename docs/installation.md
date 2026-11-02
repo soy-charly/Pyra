@@ -14,8 +14,8 @@ No Python installation is needed.
 cargo test
 cargo build --release
 ./scripts/install.sh
-pyra examples/hello.pyra -o hello
-./hello
+pyra examples/hello.pyra -o out/hello
+./out/hello
 ```
 
 To select another C++ compiler, set `PYRA_CXX` for the compiler invocation, for example `PYRA_CXX=g++ pyra hello.pyra`.

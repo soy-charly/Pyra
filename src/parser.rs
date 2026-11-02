@@ -60,6 +60,7 @@ impl Parser {
             } else {
                 Some(self.expression(0)?)
             };
+            self.finish_simple_statement()?;
             return Ok(Stmt {
                 kind: StmtKind::Return(value),
                 position,
@@ -67,6 +68,7 @@ impl Parser {
         }
         if self.keyword("break") {
             self.advance();
+            self.finish_simple_statement()?;
             return Ok(Stmt {
                 kind: StmtKind::Break,
                 position,
@@ -74,6 +76,7 @@ impl Parser {
         }
         if self.keyword("continue") {
             self.advance();
+            self.finish_simple_statement()?;
             return Ok(Stmt {
                 kind: StmtKind::Continue,
                 position,
@@ -88,6 +91,7 @@ impl Parser {
             self.advance();
             self.advance();
             let value = self.expression(0)?;
+            self.finish_simple_statement()?;
             return Ok(Stmt {
                 kind: StmtKind::Assign {
                     name,
@@ -98,6 +102,7 @@ impl Parser {
             });
         }
         let expression = self.expression(0)?;
+        self.finish_simple_statement()?;
         Ok(Stmt {
             kind: StmtKind::Expr(expression),
             position,
@@ -411,6 +416,13 @@ impl Parser {
         matches!(
             self.current().kind,
             TokenKind::Newline | TokenKind::Semicolon | TokenKind::RightBrace | TokenKind::Eof
+        )
+    }
+
+    fn finish_simple_statement(&mut self) -> Result<(), String> {
+        self.expect(
+            &TokenKind::Semicolon,
+            "expected `;` at the end of the statement",
         )
     }
 
