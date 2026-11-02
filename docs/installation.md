@@ -13,17 +13,24 @@ No Python installation is needed.
 ```sh
 cargo test
 cargo build --release
-cargo install --path .
+./scripts/install.sh
 pyra examples/hello.pyra -o hello
 ./hello
 ```
 
 To select another C++ compiler, set `PYRA_CXX` for the compiler invocation, for example `PYRA_CXX=g++ pyra hello.pyra`.
 
-`cargo install --path .` installs `pyra` into Cargo's bin directory (usually `~/.cargo/bin`); ensure that directory is on `PATH`. During development, use `cargo run -- examples/hello.pyra` rather than assuming a global install.
+`./scripts/install.sh` builds the release compiler and installs it to `/usr/local/bin/pyra`, using `sudo` only for the installation step when needed. Run it from any directory; it finds the repository relative to the script. During development, use `cargo run -- examples/hello.pyra` rather than assuming a global install.
 
 ## VS Code
 
-From `vscode-extension/`, run `npx @vscode/vsce package --no-dependencies --allow-missing-repository` to create a `.vsix`, then install it with `code --install-extension pyra-language-0.1.0.vsix`. Configure `pyraLanguage.compilerPath` if `pyra` is not on `PATH`.
+From the repository root, package and install the extension with:
+
+```sh
+(cd vscode-extension && npx --yes @vscode/vsce package --no-dependencies --allow-missing-repository)
+code --install-extension vscode-extension/pyra-language-0.1.0.vsix
+```
+
+The package manifest is inside `vscode-extension/`, and the `.vsix` is created there; running `vsce package` from the repository root fails because that directory has no extension manifest. Configure `pyraLanguage.compilerPath` if `pyra` is not on `PATH`.
 
 The current backend and packaging instructions target the host OS. A host C++20 compiler must be installed; cross-compilation, Windows executable suffix handling, and macOS notarization are not yet automated.

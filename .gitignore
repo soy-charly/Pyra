@@ -1,5 +1,7 @@
 # Rust build artifacts
-/target/
+target/
+/out/*
+!/out/.gitkeep
 # Cargo.lock is intentionally kept trackable for reproducible compiler builds.
 
 # VS Code extension packaging and dependencies

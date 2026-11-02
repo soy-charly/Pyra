@@ -11,11 +11,13 @@ Requirements: Rust/Cargo and a C++20 compiler (`clang++` by default; set `PYRA_C
 ```sh
 cargo build --release
 cargo test
-./target/release/pyra examples/factorial.pyra -o factorial
-./factorial
+./target/release/pyra examples/factorial.pyra -o out/factorial
+./out/factorial
 ```
 
 The `pyra-language` VS Code extension source is in [`vscode-extension/`](vscode-extension/). See its README for packaging and installation.
+
+Install the compiler to `/usr/local/bin/pyra` with `./scripts/install.sh`.
 
 ## Example
 
