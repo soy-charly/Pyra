@@ -13,6 +13,7 @@ The current implementation is an intentionally small first release. Its supporte
 Requirements: Rust/Cargo and a C++20 compiler (`clang++` by default; set `PYRA_CXX` to use another compiler).
 
 ```sh
+git clone https://github.com/soy-charly/Pyra.git && cd Pyra
 cargo build --release
 cargo test
 ./target/release/pyra examples/factorial.pyra -o out/factorial
