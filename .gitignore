@@ -1,0 +1,22 @@
+# Rust build artifacts
+/target/
+# Cargo.lock is intentionally kept trackable for reproducible compiler builds.
+
+# VS Code extension packaging and dependencies
+/vscode-extension/node_modules/
+/vscode-extension/*.vsix
+/vscode-extension/.vscode-test/
+
+# Native compiler outputs
+*.o
+*.obj
+*.s
+*.dll
+*.dylib
+*.exe
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

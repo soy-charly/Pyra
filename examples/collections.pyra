@@ -1,0 +1,6 @@
+values = [10, 20, 30]
+scores = {"ada": 98, "grace": 95}
+print(values[1])
+print(values[0:2])
+print(scores["ada"])
+print("grace" in scores)

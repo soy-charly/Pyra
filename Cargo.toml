@@ -1,0 +1,15 @@
+[package]
+name = "pyra"
+version = "0.1.0"
+edition = "2024"
+description = "A brace-delimited, Python-inspired compiled language"
+license = "MIT"
+
+[[bin]]
+name = "pyra"
+path = "src/main.rs"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

@@ -1,0 +1,4 @@
+people = {"name": "Ada", "language": "Pyra"}
+for key in people {
+    print(key, people[key])
+}

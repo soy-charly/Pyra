@@ -1,0 +1,74 @@
+{
+  "name": "pyra-language",
+  "displayName": "Pyra Language",
+  "description": "Syntax highlighting and compiler commands for the Pyra language.",
+  "version": "0.1.0",
+  "publisher": "pyra-language",
+  "license": "MIT",
+  "files": [
+    "extension.js",
+    "language-configuration.json",
+    "LICENSE",
+    "README.md",
+    "syntaxes/**"
+  ],
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:pyra"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "pyra",
+        "aliases": [
+          "Pyra",
+          "pyra"
+        ],
+        "extensions": [
+          ".pyra"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "pyra",
+        "scopeName": "source.pyra",
+        "path": "./syntaxes/pyra.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "pyra.compileFile",
+        "title": "Pyra: Compile File"
+      },
+      {
+        "command": "pyra.runExecutable",
+        "title": "Pyra: Run Executable"
+      },
+      {
+        "command": "pyra.checkFile",
+        "title": "Pyra: Check File"
+      }
+    ],
+    "configuration": {
+      "title": "Pyra",
+      "properties": {
+        "pyraLanguage.compilerPath": {
+          "type": "string",
+          "default": "pyra",
+          "description": "Path to the Pyra compiler executable."
+        }
+      }
+    }
+  }
+}

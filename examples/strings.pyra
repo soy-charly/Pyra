@@ -1,0 +1,4 @@
+greeting = "hello"
+name = "Pyra"
+print(greeting + ", " + name + "!")
+print(len(name))
