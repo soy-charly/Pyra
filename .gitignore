@@ -1,5 +1,6 @@
 # Rust build artifacts
 target/
+fileTesting/
 /out/*
 !/out/.gitkeep
 # Cargo.lock is intentionally kept trackable for reproducible compiler builds.

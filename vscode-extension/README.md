@@ -1,5 +1,9 @@
 # Pyra Language for VS Code
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/soy-charly/Pyra/HEAD/vscode-extension/icon.png" alt="Pyra logo" width="180">
+</p>
+
 The extension recognizes `.pyra` files, provides TextMate syntax highlighting, snippets for functions/branches/loops/collections, built-in and local-function completion, hover documentation, function signature help, `#` line comments, automatic delimiter pairs, brace indentation, and three commands:
 
 - **Pyra: Compile File** — compiles the active file beside its source.
