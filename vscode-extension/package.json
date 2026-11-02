@@ -15,6 +15,7 @@
     "language-features.js",
     "language-configuration.json",
     "icon.png",
+    "icons/**",
     "LICENSE",
     "README.md",
     "snippets/**",
@@ -58,6 +59,13 @@
       {
         "language": "pyra",
         "path": "./snippets/pyra.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "pyra-icons",
+        "label": "Pyra Icons",
+        "path": "./icons/pyra-icon-theme.json"
       }
     ],
     "commands": [

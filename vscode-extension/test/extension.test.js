@@ -12,6 +12,14 @@ test("manifest registers the Pyra language, grammar, and requested commands", ()
   assert.ok(manifest.contributes.languages.some(
     (language) => language.id === "pyra" && language.extensions.includes(".pyra")
   ));
+  const iconTheme = manifest.contributes.iconThemes.find((theme) => theme.id === "pyra-icons");
+  assert.ok(iconTheme, "Pyra file icon theme should be contributed");
+  const iconThemePath = path.join(root, iconTheme.path);
+  assert.ok(fs.existsSync(iconThemePath), "Pyra file icon theme should exist");
+  const fileIcons = JSON.parse(fs.readFileSync(iconThemePath, "utf8"));
+  const pyraIcon = fileIcons.iconDefinitions[fileIcons.fileExtensions.pyra];
+  assert.ok(pyraIcon, "the .pyra extension should map to an icon");
+  assert.ok(fs.existsSync(path.join(path.dirname(iconThemePath), pyraIcon.iconPath)));
   assert.ok(manifest.contributes.grammars.some(
     (grammar) => grammar.language === "pyra" && grammar.path === "./syntaxes/pyra.tmLanguage.json"
   ));

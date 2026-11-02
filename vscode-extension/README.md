@@ -10,6 +10,8 @@ The extension recognizes `.pyra` files, provides TextMate syntax highlighting, s
 - **Pyra: Check File** — runs the compiler's syntax/semantic-only mode.
 - **Pyra: Run Executable** — opens a picker to run a compiled executable in the integrated terminal.
 
+It also includes a **Pyra Icons** file icon theme for `.pyra` files. To show the logo in Explorer, open the Command Palette, run **Preferences: File Icon Theme**, and select **Pyra Icons**.
+
 Set `pyraLanguage.compilerPath` to the compiler executable if `pyra` is not available on `PATH`. Compiler source diagnostics are published to VS Code's Problems panel. Completion, hover, and signature help use the built-ins and top-level function definitions in the current file; variable completion is inferred from simple assignments, loop variables, and function parameters. These features do not require an LSP server.
 
 Package and install from the repository root:

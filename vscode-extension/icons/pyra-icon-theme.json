@@ -1,0 +1,10 @@
+{
+  "iconDefinitions": {
+    "_pyraFile": {
+      "iconPath": "./pyra-file.svg"
+    }
+  },
+  "fileExtensions": {
+    "pyra": "_pyraFile"
+  }
+}
