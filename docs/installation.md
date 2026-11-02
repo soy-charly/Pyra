@@ -13,7 +13,7 @@ No Python installation is needed.
 ```sh
 cargo test
 cargo build --release
-./scripts/install.sh
+./scripts/install.sh  
 pyra examples/hello.pyra -o out/hello
 ./out/hello
 ```

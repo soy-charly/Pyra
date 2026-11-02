@@ -20,6 +20,10 @@ cargo test
 ./out/factorial
 ```
 
+```sh
+./scripts/install.sh
+````
+
 The `pyra-language` VS Code extension source is in [`vscode-extension/`](vscode-extension/). It includes syntax highlighting, code snippets, completion, hover documentation, and signature help; see its README for packaging and installation.
 
 Install the compiler to `/usr/local/bin/pyra` with `./scripts/install.sh`. The installer can also install the VS Code extension and its optional Material Icon Theme SVG integration: run `./scripts/install.sh --vscode` to opt in explicitly, or answer the optional prompt when running it interactively. See [`docs/installation.md`](docs/installation.md) for the icon setup.
