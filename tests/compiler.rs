@@ -119,6 +119,34 @@ print(quadratic_sum(10000000));
 }
 
 #[test]
+fn parses_dictionaries_with_entries_on_separate_lines() {
+    let directory = TestDirectory::new();
+    let source = directory.file("multiline-dictionary.pyra");
+    let executable = directory.file("multiline-dictionary");
+    fs::write(
+        &source,
+        r#"
+persona = {
+    "edad": 17,
+    "curso": 2
+};
+print(persona["edad"], persona["curso"]);
+"#,
+    )
+    .unwrap();
+
+    let compilation = pyra(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
+    assert!(
+        compilation.status.success(),
+        "{}",
+        String::from_utf8_lossy(&compilation.stderr)
+    );
+    let execution = Command::new(executable).output().unwrap();
+    assert!(execution.status.success());
+    assert_eq!(String::from_utf8_lossy(&execution.stdout).trim(), "17 2");
+}
+
+#[test]
 fn supports_syntax_only_object_and_assembly_modes() {
     let directory = TestDirectory::new();
     let source = directory.file("simple.pyra");

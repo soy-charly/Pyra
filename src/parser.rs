@@ -276,15 +276,18 @@ impl Parser {
             }
             TokenKind::LeftBrace => {
                 let mut items = Vec::new();
+                self.newlines();
                 if !self.at(&TokenKind::RightBrace) {
                     loop {
                         let key = self.expression(0)?;
                         self.expect(&TokenKind::Colon, "expected `:` between key and value")?;
                         let value = self.expression(0)?;
                         items.push((key, value));
+                        self.newlines();
                         if !self.take(&TokenKind::Comma) {
                             break;
                         }
+                        self.newlines();
                         if self.at(&TokenKind::RightBrace) {
                             break;
                         }
@@ -431,6 +434,12 @@ impl Parser {
             self.current().kind,
             TokenKind::Newline | TokenKind::Semicolon
         ) {
+            self.advance();
+        }
+    }
+
+    fn newlines(&mut self) {
+        while self.at(&TokenKind::Newline) {
             self.advance();
         }
     }
