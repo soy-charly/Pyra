@@ -18,6 +18,11 @@ No Python installation is needed.
 ```sh
 git clone https://github.com/soy-charly/Pyra.git
 cd Pyra
+```
+
+Linux/macOS:
+
+```sh
 cargo build --release
 cargo test
 ./target/release/pyra examples/factorial.pyra -o out/factorial
@@ -36,6 +41,10 @@ The installer may use `sudo` to write to `/usr/local/bin`. For development, run 
 cargo run -- examples/hello.pyra -o out/hello
 ./out/hello
 ```
+
+Windows:
+
+On Windows, install the prerequisites and install Pyra with `cargo install --path . --locked`. See the [installation guide](docs/installation.md#windows) for the C++ toolchain setup and PowerShell example.
 
 See the [CLI reference](docs/cli-reference.md) for available options and [examples/](examples/) for more programs.
 
