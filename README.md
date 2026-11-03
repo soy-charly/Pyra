@@ -4,29 +4,42 @@
   <img src="icons/Pyra-Logo.png" alt="Pyra logo" width="220">
 </p>
 
-Pyra is a small, brace-delimited, Python-inspired compiled language with semicolon-terminated simple statements. Its compiler is written in Rust and emits C++20 as a native backend; Clang or GCC then produces a standalone native executable. Compiled programs do not load or invoke the Pyra compiler, Python, or another interpreter.
+Pyra is a small, brace-delimited, Python-inspired compiled language. Its compiler is written in Rust and emits C++20; Clang or GCC then builds a standalone native executable. Compiled programs do not load or invoke the Pyra compiler, Python, or another interpreter.
 
-The current implementation is an intentionally small first release. Its supported syntax, runtime model, build requirements, and known gaps are documented in [`docs/language-spec.md`](docs/language-spec.md), [`docs/architecture.md`](docs/architecture.md), and [`docs/installation.md`](docs/installation.md).
+Pyra is an early-stage project, and its language and runtime may change. It is not Python-compatible. The supported syntax, runtime model, build requirements, and current limitations are described in the [language specification](docs/language-spec.md), [architecture notes](docs/architecture.md), and [installation guide](docs/installation.md).
+
+## Requirements
+
+- Rust and Cargo (edition 2024).
+- A C++20 compiler and standard library. The default is `clang++`; set `PYRA_CXX` to select another compiler, such as `g++`.
+
+No Python installation is needed.
 
 ## Build and try it
 
-Requirements: Rust/Cargo and a C++20 compiler (`clang++` by default; set `PYRA_CXX` to use another compiler).
-
 ```sh
-git clone https://github.com/soy-charly/Pyra.git && cd Pyra
+git clone https://github.com/soy-charly/Pyra.git
+cd Pyra
 cargo build --release
 cargo test
 ./target/release/pyra examples/factorial.pyra -o out/factorial
 ./out/factorial
 ```
 
+To install the release binary to `/usr/local/bin/pyra`, run:
+
 ```sh
 ./scripts/install.sh
-````
+```
 
-The `pyra-language` VS Code extension source is in [`vscode-extension/`](vscode-extension/). It includes syntax highlighting, code snippets, completion, hover documentation, and signature help; see its README for packaging and installation.
+The installer may use `sudo` to write to `/usr/local/bin`. For development, run the compiler without installing it:
 
-Install the compiler to `/usr/local/bin/pyra` with `./scripts/install.sh`. The installer can also install the VS Code extension and its optional Material Icon Theme SVG integration: run `./scripts/install.sh --vscode` to opt in explicitly, or answer the optional prompt when running it interactively. See [`docs/installation.md`](docs/installation.md) for the icon setup.
+```sh
+cargo run -- examples/hello.pyra -o out/hello
+./out/hello
+```
+
+See the [CLI reference](docs/cli-reference.md) for available options and [examples/](examples/) for more programs.
 
 ## Example
 
@@ -45,8 +58,24 @@ for i in range(6) {
 
 ## Project layout
 
-- `src/`: Rust lexer, parser, semantic checks, C++ code generator, and GCC-style CLI.
+- `src/`: Rust lexer, parser, semantic checks, C++ code generator, and command-line interface.
 - `examples/`: runnable `.pyra` programs.
 - `tests/`: compiler-to-native-executable integration tests.
-- `docs/`: language, backend, CLI, and installation notes.
-- `vscode-extension/`: TextMate grammar and CLI integration extension.
+- `docs/`: language, backend, CLI, and installation documentation.
+
+## Contributing
+
+Contributions are welcome. For a substantial change, open an issue first to discuss the approach. For bug reports, include the Pyra version, operating system, C++ compiler, a small reproducing program, and the actual and expected behavior. Please do not include secrets or private data in issues.
+
+Before opening a pull request:
+
+1. Create a focused branch and keep the change scoped to one fix or feature.
+2. Run `cargo fmt --check` and `cargo test`.
+3. If you change language syntax or runtime behavior, add or update tests and the relevant documentation, especially [docs/language-spec.md](docs/language-spec.md).
+4. Update other affected docs and examples, and describe the user-visible change and validation in the pull request.
+
+Keep generated binaries and build artifacts out of commits. Use clear commit messages; there is no required commit-message format.
+
+## License
+
+Pyra is distributed under the [MIT License](LICENSE).
