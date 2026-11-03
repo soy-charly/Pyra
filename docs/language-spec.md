@@ -1,6 +1,6 @@
-# Pyra language specification (0.1)
+# Zenvik language specification (0.1)
 
-Pyra is Python-inspired, not Python-compatible. `.pyra` is the conventional source extension. Blocks use `{` and `}`; indentation is insignificant. Every simple statement must end with `;`. Newlines and semicolons separate statements outside parentheses, brackets, and dictionary literals. Block headers and closing braces do not need a semicolon. `#` begins a line comment.
+Zenvik is Python-inspired, not Python-compatible. `.zenvik` is the conventional source extension. Blocks use `{` and `}`; indentation is insignificant. Every simple statement must end with `;`. Newlines and semicolons separate statements outside parentheses, brackets, and dictionary literals. Block headers and closing braces do not need a semicolon. `#` begins a line comment.
 
 ## Values and names
 
@@ -10,7 +10,7 @@ Strings use single or double quotes and support `\\`, `\"`, `\'`, `\n`, `\r`, `\
 
 ## Statements
 
-```pyra
+```zenvik
 value = 2;
 value += 3;
 

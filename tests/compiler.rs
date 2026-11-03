@@ -11,7 +11,7 @@ impl TestDirectory {
     fn new() -> Self {
         let sequence = NEXT_DIRECTORY.fetch_add(1, Ordering::Relaxed);
         let path = std::env::temp_dir().join(format!(
-            "pyra-e2e-{}-{sequence}-with spaces",
+            "zenvik-e2e-{}-{sequence}-with spaces",
             std::process::id()
         ));
         fs::create_dir_all(&path).unwrap();
@@ -29,8 +29,8 @@ impl Drop for TestDirectory {
     }
 }
 
-fn pyra(arguments: &[&std::ffi::OsStr]) -> Output {
-    Command::new(env!("CARGO_BIN_EXE_pyra"))
+fn zenvik(arguments: &[&std::ffi::OsStr]) -> Output {
+    Command::new(env!("CARGO_BIN_EXE_zenvik"))
         .args(arguments)
         .output()
         .unwrap()
@@ -43,7 +43,7 @@ fn arg(path: &std::path::Path) -> &std::ffi::OsStr {
 #[test]
 fn compiles_a_standalone_program_with_functions_and_collections() {
     let directory = TestDirectory::new();
-    let source = directory.file("factorial and lists.pyra");
+    let source = directory.file("factorial and lists.zenvik");
     let executable = directory.file("standalone program");
     fs::write(
         &source,
@@ -69,7 +69,7 @@ if total == 6 and scores["answer"] in [5] {
     )
     .unwrap();
 
-    let compilation = pyra(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
+    let compilation = zenvik(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
     assert!(
         compilation.status.success(),
         "{}",
@@ -87,7 +87,7 @@ if total == 6 and scores["answer"] in [5] {
 #[test]
 fn preserves_precision_for_integer_sums_beyond_64_bits() {
     let directory = TestDirectory::new();
-    let source = directory.file("quadratic-sum.pyra");
+    let source = directory.file("quadratic-sum.zenvik");
     let executable = directory.file("quadratic-sum");
     fs::write(
         &source,
@@ -104,7 +104,7 @@ print(quadratic_sum(10000000));
     )
     .unwrap();
 
-    let compilation = pyra(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
+    let compilation = zenvik(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
     assert!(
         compilation.status.success(),
         "{}",
@@ -121,7 +121,7 @@ print(quadratic_sum(10000000));
 #[test]
 fn parses_dictionaries_with_entries_on_separate_lines() {
     let directory = TestDirectory::new();
-    let source = directory.file("multiline-dictionary.pyra");
+    let source = directory.file("multiline-dictionary.zenvik");
     let executable = directory.file("multiline-dictionary");
     fs::write(
         &source,
@@ -135,7 +135,7 @@ print(persona["edad"], persona["curso"]);
     )
     .unwrap();
 
-    let compilation = pyra(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
+    let compilation = zenvik(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
     assert!(
         compilation.status.success(),
         "{}",
@@ -149,17 +149,17 @@ print(persona["edad"], persona["curso"]);
 #[test]
 fn supports_syntax_only_object_and_assembly_modes() {
     let directory = TestDirectory::new();
-    let source = directory.file("simple.pyra");
+    let source = directory.file("simple.zenvik");
     fs::write(&source, "print(2 + 3);\n").unwrap();
     assert!(
-        pyra(&[OsStrExt::as_os_str("-fsyntax-only"), arg(&source)])
+        zenvik(&[OsStrExt::as_os_str("-fsyntax-only"), arg(&source)])
             .status
             .success()
     );
 
     let object = directory.file("simple.o");
     assert!(
-        pyra(&[
+        zenvik(&[
             OsStrExt::as_os_str("-c"),
             arg(&source),
             OsStrExt::as_os_str("-o"),
@@ -172,7 +172,7 @@ fn supports_syntax_only_object_and_assembly_modes() {
 
     let assembly = directory.file("simple.s");
     assert!(
-        pyra(&[
+        zenvik(&[
             OsStrExt::as_os_str("-S"),
             arg(&source),
             OsStrExt::as_os_str("-o"),
@@ -187,25 +187,25 @@ fn supports_syntax_only_object_and_assembly_modes() {
 #[test]
 fn reports_source_locations_and_unknown_functions() {
     let directory = TestDirectory::new();
-    let source = directory.file("bad.pyra");
+    let source = directory.file("bad.zenvik");
     fs::write(&source, "\nprint(missing_function());\n").unwrap();
-    let output = pyra(&[arg(&source)]);
+    let output = zenvik(&[arg(&source)]);
     assert_eq!(output.status.code(), Some(2));
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(stderr.contains("bad.pyra:2:7: error: unknown function `missing_function`"));
+    assert!(stderr.contains("bad.zenvik:2:7: error: unknown function `missing_function`"));
 }
 
 #[test]
 fn checks_short_circuiting_and_runtime_exit_status() {
     let directory = TestDirectory::new();
-    let source = directory.file("short-circuit.pyra");
+    let source = directory.file("short-circuit.zenvik");
     let executable = directory.file("short-circuit");
     fs::write(
         &source,
         "if False and missing_name {\n    print(1);\n}\nprint(True or missing_name);\n",
     )
     .unwrap();
-    let compilation = pyra(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
+    let compilation = zenvik(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
     assert!(compilation.status.success());
     let execution = Command::new(&executable).output().unwrap();
     assert!(execution.status.success());
@@ -215,12 +215,12 @@ fn checks_short_circuiting_and_runtime_exit_status() {
 #[test]
 fn compiles_multiple_source_files_together() {
     let directory = TestDirectory::new();
-    let library = directory.file("math.pyra");
-    let program = directory.file("main.pyra");
+    let library = directory.file("math.zenvik");
+    let program = directory.file("main.zenvik");
     let executable = directory.file("multiple");
     fs::write(&library, "def double(value) {\n    return value * 2;\n}\n").unwrap();
     fs::write(&program, "print(double(21));\n").unwrap();
-    let compilation = pyra(&[
+    let compilation = zenvik(&[
         arg(&program),
         arg(&library),
         OsStrExt::as_os_str("-o"),
@@ -239,7 +239,7 @@ fn compiles_multiple_source_files_together() {
 #[test]
 fn evaluates_operands_left_to_right_and_compares_types_correctly() {
     let directory = TestDirectory::new();
-    let source = directory.file("evaluation.pyra");
+    let source = directory.file("evaluation.zenvik");
     let executable = directory.file("evaluation");
     fs::write(
         &source,
@@ -258,7 +258,7 @@ print(5.5 % 2.0);
 "#,
     )
     .unwrap();
-    let compilation = pyra(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
+    let compilation = zenvik(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
     assert!(
         compilation.status.success(),
         "{}",
@@ -275,23 +275,21 @@ print(5.5 % 2.0);
 #[test]
 fn requires_semicolons_after_simple_statements() {
     let directory = TestDirectory::new();
-    let source = directory.file("missing-semicolon.pyra");
+    let source = directory.file("missing-semicolon.zenvik");
     fs::write(&source, "value = 1\nprint(value);\n").unwrap();
-    let output = pyra(&[arg(&source)]);
+    let output = zenvik(&[arg(&source)]);
     assert_eq!(output.status.code(), Some(2));
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(
-        stderr.contains(
-            "missing-semicolon.pyra:1:10: error: expected `;` at the end of the statement"
-        )
-    );
+    assert!(stderr.contains(
+        "missing-semicolon.zenvik:1:10: error: expected `;` at the end of the statement"
+    ));
 
     fs::write(
         &source,
         "value = 1;\nif value == 1 {\n    print(value);\n}\n",
     )
     .unwrap();
-    let output = pyra(&[OsStrExt::as_os_str("-fsyntax-only"), arg(&source)]);
+    let output = zenvik(&[OsStrExt::as_os_str("-fsyntax-only"), arg(&source)]);
     assert!(
         output.status.success(),
         "{}",

@@ -34,7 +34,7 @@ fn main() {
     let code = match run(env::args_os().skip(1).collect()) {
         Ok(code) => code,
         Err(error) => {
-            eprintln!("pyra: error: {error}");
+            eprintln!("zenvik: error: {error}");
             2
         }
     };
@@ -101,7 +101,7 @@ fn parse_arguments(arguments: Vec<OsString>) -> Result<Options, String> {
                 process::exit(0);
             }
             "--version" => {
-                println!("pyra {VERSION}");
+                println!("zenvik {VERSION}");
                 process::exit(0);
             }
             "-o" => {
@@ -138,7 +138,7 @@ fn parse_arguments(arguments: Vec<OsString>) -> Result<Options, String> {
         index += 1;
     }
     if inputs.is_empty() {
-        return Err("no input files; try `pyra --help`".into());
+        return Err("no input files; try `zenvik --help`".into());
     }
     if mode == OutputMode::SyntaxOnly && output.is_some() {
         return Err("`-o` cannot be used with `-fsyntax-only`".into());
@@ -168,12 +168,12 @@ fn default_output(input: &Path, mode: OutputMode) -> PathBuf {
 }
 
 fn compile(generated: &str, output: Option<&Path>, options: &Options) -> Result<i32, String> {
-    let compiler = env::var_os("PYRA_CXX").unwrap_or_else(|| OsString::from("clang++"));
+    let compiler = env::var_os("ZENVIK_CXX").unwrap_or_else(|| OsString::from("clang++"));
     let nonce = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|error| format!("system clock error: {error}"))?
         .as_nanos();
-    let source_path = env::temp_dir().join(format!("pyra-{}-{nonce}.cpp", process::id()));
+    let source_path = env::temp_dir().join(format!("zenvik-{}-{nonce}.cpp", process::id()));
     fs::write(&source_path, generated)
         .map_err(|error| format!("cannot write temporary backend source: {error}"))?;
 
@@ -200,12 +200,12 @@ fn compile(generated: &str, output: Option<&Path>, options: &Options) -> Result<
     }
     if options.verbose {
         eprintln!(
-            "pyra: invoking {} for {} input file(s)",
+            "zenvik: invoking {} for {} input file(s)",
             Path::new(&compiler).display(),
             options.inputs.len()
         );
         eprintln!(
-            "pyra: mode {:?}",
+            "zenvik: mode {:?}",
             match options.mode {
                 OutputMode::Executable => "executable",
                 OutputMode::Object => "object",
@@ -214,7 +214,7 @@ fn compile(generated: &str, output: Option<&Path>, options: &Options) -> Result<
             }
         );
         eprintln!(
-            "pyra: output {}",
+            "zenvik: output {}",
             output.map_or_else(|| "<none>".into(), |path| path.display().to_string())
         );
     }
@@ -229,7 +229,7 @@ fn compile(generated: &str, output: Option<&Path>, options: &Options) -> Result<
         && error.kind() != std::io::ErrorKind::NotFound
     {
         eprintln!(
-            "pyra: warning: cannot remove temporary file {}: {error}",
+            "zenvik: warning: cannot remove temporary file {}: {error}",
             source_path.display()
         );
     }
@@ -239,8 +239,8 @@ fn compile(generated: &str, output: Option<&Path>, options: &Options) -> Result<
 
 fn print_help() {
     println!(
-        "Pyra {VERSION} - brace-delimited compiled language\n\
-Usage: pyra [options] file.pyra [file.pyra ...]\n\
+        "Zenvik {VERSION} - brace-delimited compiled language\n\
+Usage: zenvik [options] file.zenvik [file.zenvik ...]\n\
 \n\
 Options:\n\
   -o PATH          Write output to PATH\n\
@@ -252,7 +252,7 @@ Options:\n\
   --help           Show this help\n\
   --version        Show compiler version\n\
 \n\
-Set PYRA_CXX to select the C++20 compiler used by the native backend."
+Set ZENVIK_CXX to select the C++20 compiler used by the native backend."
     );
 }
 
@@ -264,20 +264,20 @@ mod tests {
     fn output_name_uses_input_stem() {
         assert_eq!(
             default_output(
-                Path::new("examples/hello world.pyra"),
+                Path::new("examples/hello world.zenvik"),
                 OutputMode::Executable
             ),
             PathBuf::from("examples/hello world")
         );
         assert_eq!(
-            default_output(Path::new("hello.pyra"), OutputMode::Object),
+            default_output(Path::new("hello.zenvik"), OutputMode::Object),
             PathBuf::from("hello.o")
         );
     }
 
     #[test]
     fn rejects_conflicting_output_modes() {
-        let args = ["-c", "-S", "sample.pyra"]
+        let args = ["-c", "-S", "sample.zenvik"]
             .into_iter()
             .map(OsString::from)
             .collect();
@@ -286,7 +286,7 @@ mod tests {
 
     #[test]
     fn parses_compound_assignment_tokens() {
-        let tokens = lexer::lex("count += 1\n", "test.pyra").unwrap();
+        let tokens = lexer::lex("count += 1\n", "test.zenvik").unwrap();
         assert!(matches!(
             &tokens[1].kind,
             TokenKind::Operator(operator) if operator == "+="

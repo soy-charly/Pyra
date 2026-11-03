@@ -340,14 +340,14 @@ pub fn generate(statements: &[Stmt]) -> String {
     for (name, _, _) in &functions {
         let _ = writeln!(
             output,
-            "static Value pyra_fn_{}(const std::vector<Value>&);",
+            "static Value zenvik_fn_{}(const std::vector<Value>&);",
             name
         );
     }
     for (name, parameters, body) in &functions {
         let _ = writeln!(
             output,
-            "static Value pyra_fn_{}(const std::vector<Value>& args) {{",
+            "static Value zenvik_fn_{}(const std::vector<Value>& args) {{",
             name
         );
         output.push_str("    if (args.size() != ");
@@ -543,7 +543,7 @@ fn expression_code(expression: &Expr) -> String {
             ) {
                 format!("builtin({}, {vector})", cpp_string(name))
             } else {
-                format!("pyra_fn_{name}({vector})")
+                format!("zenvik_fn_{name}({vector})")
             }
         }
         ExprKind::Index { value, index } => sequenced_binary(

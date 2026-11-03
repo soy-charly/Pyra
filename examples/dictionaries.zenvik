@@ -1,4 +1,4 @@
-people = {"name": "Ada", "language": "Pyra"};
+people = {"name": "Ada", "language": "Zenvik"};
 for key in people {
     print(key, people[key]);
 }

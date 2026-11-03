@@ -2,12 +2,12 @@
 set -euo pipefail
 
 repo_root=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-binary="$repo_root/target/release/pyra"
-destination=/usr/local/bin/pyra
+binary="$repo_root/target/release/zenvik"
+destination=/usr/local/bin/zenvik
 
 usage() {
     printf 'Usage: %s\n' "$0"
-    printf 'Build and install Pyra to %s.\n' "$destination"
+    printf 'Build and install Zenvik to %s.\n' "$destination"
 }
 
 if [[ $# -gt 0 ]]; then
@@ -22,11 +22,11 @@ if [[ $# -gt 0 ]]; then
 fi
 
 if ! command -v cargo >/dev/null 2>&1; then
-    printf 'install.sh: cargo is required to build Pyra.\n' >&2
+    printf 'install.sh: cargo is required to build Zenvik.\n' >&2
     exit 1
 fi
 
-printf 'Building Pyra in release mode...\n'
+printf 'Building Zenvik in release mode...\n'
 cargo build --release --manifest-path "$repo_root/Cargo.toml"
 
 if [[ ! -x "$binary" ]]; then
@@ -34,7 +34,7 @@ if [[ ! -x "$binary" ]]; then
     exit 1
 fi
 
-printf 'Installing Pyra to %s...\n' "$destination"
+printf 'Installing Zenvik to %s...\n' "$destination"
 
 if [[ $(id -u) -eq 0 ]]; then
     install -D -m 755 "$binary" "$destination"
@@ -48,4 +48,4 @@ else
     sudo install -D -m 755 "$binary" "$destination"
 fi
 
-printf 'Installed Pyra. Verify with: pyra --version\n'
+printf 'Installed Zenvik. Verify with: zenvik --version\n'
