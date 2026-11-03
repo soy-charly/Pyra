@@ -85,6 +85,40 @@ if total == 6 and scores["answer"] in [5] {
 }
 
 #[test]
+fn preserves_precision_for_integer_sums_beyond_64_bits() {
+    let directory = TestDirectory::new();
+    let source = directory.file("quadratic-sum.pyra");
+    let executable = directory.file("quadratic-sum");
+    fs::write(
+        &source,
+        r#"
+def quadratic_sum(n) {
+    total = 0;
+    for i in range(n) {
+        total = total + (i * i);
+    }
+    return total;
+}
+print(quadratic_sum(10000000));
+"#,
+    )
+    .unwrap();
+
+    let compilation = pyra(&[arg(&source), OsStrExt::as_os_str("-o"), arg(&executable)]);
+    assert!(
+        compilation.status.success(),
+        "{}",
+        String::from_utf8_lossy(&compilation.stderr)
+    );
+    let execution = Command::new(executable).output().unwrap();
+    assert!(execution.status.success());
+    assert_eq!(
+        String::from_utf8_lossy(&execution.stdout).trim(),
+        "333333283333335000000"
+    );
+}
+
+#[test]
 fn supports_syntax_only_object_and_assembly_modes() {
     let directory = TestDirectory::new();
     let source = directory.file("simple.pyra");

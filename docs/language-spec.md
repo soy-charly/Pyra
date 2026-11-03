@@ -45,6 +45,6 @@ Lists use `[item, ...]`; dictionaries use `{key: value, ...}`. Indexing and slic
 
 ## Runtime and errors
 
-The runtime is embedded in each generated native program and uses C++ standard-library values with shared ownership for collection storage. Collection literals, concatenation, indexing, slicing, membership, conversions, and iteration are implemented. List/dictionary mutation methods and a module system are not.
+The runtime is embedded in each generated native program, uses Boost.Multiprecision for arbitrary-precision integers, and uses C++ standard-library values with shared ownership for collection storage. Collection literals, concatenation, indexing, slicing, membership, conversions, and iteration are implemented. List/dictionary mutation methods and a module system are not.
 
 Lexical, parse, and semantic errors report the source path, line, and column. Runtime errors are printed to standard error and exit with status 1. Numeric and collection behavior is intentionally a small subset; do not rely on exact Python coercion, formatting, Unicode indexing, or overflow behavior.

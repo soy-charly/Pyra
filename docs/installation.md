@@ -4,8 +4,10 @@
 
 - Rust and Cargo (edition 2024).
 - Clang or GCC with a C++20 standard library (`clang++` is the default backend).
+- Boost headers, including Boost.Multiprecision.
 
 No Python installation is needed.
+Ensure the Boost headers are available on the C++ compiler's include path; Pyra uses the header-only Boost.Multiprecision library for integer values.
 
 ## Build, test, install
 

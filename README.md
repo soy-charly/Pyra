@@ -10,6 +10,7 @@ Pyra is an early-stage project, and its language and runtime may change. It is n
 
 - Rust and Cargo (edition 2024).
 - A C++20 compiler and standard library. The default is `clang++`; set `PYRA_CXX` to select another compiler, such as `g++`.
+- Boost headers, including Boost.Multiprecision.
 
 No Python installation is needed.
 

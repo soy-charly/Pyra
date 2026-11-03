@@ -13,17 +13,20 @@ const RUNTIME: &str = r#"
 #include <string>
 #include <variant>
 #include <vector>
+#include <boost/multiprecision/cpp_int.hpp>
 
 struct Value;
+using Integer = boost::multiprecision::cpp_int;
 using List = std::vector<Value>;
 using Dict = std::map<std::string, Value>;
 using ListPtr = std::shared_ptr<List>;
 using DictPtr = std::shared_ptr<Dict>;
 
 struct Value {
-    std::variant<std::monostate, std::int64_t, double, bool, std::string, ListPtr, DictPtr> data;
+    std::variant<std::monostate, Integer, double, bool, std::string, ListPtr, DictPtr> data;
     Value() = default;
-    Value(std::int64_t value) : data(value) {}
+    Value(Integer value) : data(std::move(value)) {}
+    Value(std::int64_t value) : data(Integer(value)) {}
     Value(double value) : data(value) {}
     Value(bool value) : data(value) {}
     Value(const char* value) : data(std::string(value)) {}
@@ -34,7 +37,7 @@ struct Value {
 
 static std::string text(const Value& value);
 static double number(const Value& value) {
-    if (auto item = std::get_if<std::int64_t>(&value.data)) return static_cast<double>(*item);
+    if (auto item = std::get_if<Integer>(&value.data)) return item->convert_to<double>();
     if (auto item = std::get_if<double>(&value.data)) return *item;
     if (auto item = std::get_if<bool>(&value.data)) return *item ? 1.0 : 0.0;
     if (auto item = std::get_if<std::string>(&value.data)) {
@@ -45,7 +48,7 @@ static double number(const Value& value) {
 static bool truthy(const Value& value) {
     if (std::holds_alternative<std::monostate>(value.data)) return false;
     if (auto item = std::get_if<bool>(&value.data)) return *item;
-    if (auto item = std::get_if<std::int64_t>(&value.data)) return *item != 0;
+    if (auto item = std::get_if<Integer>(&value.data)) return *item != 0;
     if (auto item = std::get_if<double>(&value.data)) return *item != 0.0;
     if (auto item = std::get_if<std::string>(&value.data)) return !item->empty();
     if (auto item = std::get_if<ListPtr>(&value.data)) return !(*item)->empty();
@@ -57,10 +60,11 @@ static Value logical_and(const Value& left, const std::function<Value()>& right)
 static Value logical_or(const Value& left, const std::function<Value()>& right) {
     return truthy(left) ? left : right();
 }
+static Integer integer(const Value& value);
 static std::string text(const Value& value) {
     if (std::holds_alternative<std::monostate>(value.data)) return "None";
     if (auto item = std::get_if<bool>(&value.data)) return *item ? "True" : "False";
-    if (auto item = std::get_if<std::int64_t>(&value.data)) return std::to_string(*item);
+    if (auto item = std::get_if<Integer>(&value.data)) return item->convert_to<std::string>();
     if (auto item = std::get_if<double>(&value.data)) {
         std::string result = std::to_string(*item);
         while (result.size() > 1 && result.back() == '0') result.pop_back();
@@ -95,17 +99,17 @@ static Value add(Value a, Value b) {
     }
     if (std::holds_alternative<double>(a.data) || std::holds_alternative<double>(b.data))
         return Value(number(a) + number(b));
-    return Value(static_cast<std::int64_t>(number(a) + number(b)));
+    return Value(integer(a) + integer(b));
 }
 static Value subtract(Value a, Value b) {
     if (std::holds_alternative<double>(a.data) || std::holds_alternative<double>(b.data))
         return Value(number(a) - number(b));
-    return Value(static_cast<std::int64_t>(number(a) - number(b)));
+    return Value(integer(a) - integer(b));
 }
 static Value multiply(Value a, Value b) {
     if (std::holds_alternative<double>(a.data) || std::holds_alternative<double>(b.data))
         return Value(number(a) * number(b));
-    return Value(static_cast<std::int64_t>(number(a) * number(b)));
+    return Value(integer(a) * integer(b));
 }
 static Value divide(Value a, Value b) {
     double divisor = number(b);
@@ -118,22 +122,22 @@ static Value modulo(Value a, Value b) {
         if (divisor == 0.0) throw std::runtime_error("modulo by zero");
         return Value(std::fmod(number(a), divisor));
     }
-    auto dividend = static_cast<std::int64_t>(number(a));
-    auto divisor = static_cast<std::int64_t>(number(b));
+    auto dividend = integer(a);
+    auto divisor = integer(b);
     if (divisor == 0) throw std::runtime_error("modulo by zero");
-    if (dividend == std::numeric_limits<std::int64_t>::min() && divisor == -1)
-        return Value(std::int64_t{0});
     return Value(dividend % divisor);
 }
 static Value power(Value a, Value b) { return Value(std::pow(number(a), number(b))); }
 static Value negate(Value value) {
     if (std::holds_alternative<double>(value.data)) return Value(-number(value));
-    return Value(static_cast<std::int64_t>(-number(value)));
+    return Value(-integer(value));
 }
 static bool equal(const Value& a, const Value& b) {
     auto numeric = [](const Value& value) {
-        return std::holds_alternative<std::int64_t>(value.data) || std::holds_alternative<double>(value.data);
+        return std::holds_alternative<Integer>(value.data) || std::holds_alternative<double>(value.data);
     };
+    if (std::holds_alternative<Integer>(a.data) && std::holds_alternative<Integer>(b.data))
+        return std::get<Integer>(a.data) == std::get<Integer>(b.data);
     if (numeric(a) && numeric(b))
         return number(a) == number(b);
     if (a.data.index() != b.data.index()) return false;
@@ -162,6 +166,9 @@ static bool less(const Value& a, const Value& b) {
     if (auto left = std::get_if<std::string>(&a.data)) {
         if (auto right = std::get_if<std::string>(&b.data)) return *left < *right;
     }
+    if (auto left = std::get_if<Integer>(&a.data)) {
+        if (auto right = std::get_if<Integer>(&b.data)) return *left < *right;
+    }
     return number(a) < number(b);
 }
 static bool contains(const Value& container, const Value& item) {
@@ -187,17 +194,32 @@ static std::vector<Value> iterate(const Value& value) {
     }
     throw std::runtime_error("value is not iterable");
 }
-static std::int64_t integer(const Value& value) { return static_cast<std::int64_t>(number(value)); }
+static Integer integer(const Value& value) {
+    if (auto item = std::get_if<Integer>(&value.data)) return *item;
+    if (auto item = std::get_if<bool>(&value.data)) return *item ? 1 : 0;
+    if (auto item = std::get_if<std::string>(&value.data)) {
+        try { return Integer(*item); }
+        catch (const std::exception&) { return Integer(number(value)); }
+    }
+    return Integer(number(value));
+}
+static std::int64_t bounded_integer(const Value& value) {
+    auto result = integer(value);
+    if (result < std::numeric_limits<std::int64_t>::min() ||
+        result > std::numeric_limits<std::int64_t>::max())
+        throw std::runtime_error("integer is out of range");
+    return result.convert_to<std::int64_t>();
+}
 static Value index_value(const Value& value, const Value& subscript) {
     if (auto list = std::get_if<ListPtr>(&value.data)) {
-        auto index = integer(subscript);
+        auto index = bounded_integer(subscript);
         auto size = static_cast<std::int64_t>((*list)->size());
         if (index < 0) index += size;
         if (index < 0 || index >= size) throw std::runtime_error("list index out of range");
         return (**list)[static_cast<std::size_t>(index)];
     }
     if (auto string = std::get_if<std::string>(&value.data)) {
-        auto index = integer(subscript);
+        auto index = bounded_integer(subscript);
         auto size = static_cast<std::int64_t>(string->size());
         if (index < 0) index += size;
         if (index < 0 || index >= size) throw std::runtime_error("string index out of range");
@@ -215,10 +237,10 @@ static Value slice_value(const Value& value, Value start, Value end, Value step)
     auto length = static_cast<std::int64_t>(values.size());
     auto first_default = std::holds_alternative<std::monostate>(start.data);
     auto last_default = std::holds_alternative<std::monostate>(end.data);
-    auto stride = std::holds_alternative<std::monostate>(step.data) ? 1 : integer(step);
+    auto stride = std::holds_alternative<std::monostate>(step.data) ? 1 : bounded_integer(step);
     if (stride == 0) throw std::runtime_error("slice step cannot be zero");
-    auto first = first_default ? (stride > 0 ? 0 : length - 1) : integer(start);
-    auto last = last_default ? (stride > 0 ? length : -1) : integer(end);
+    auto first = first_default ? (stride > 0 ? 0 : length - 1) : bounded_integer(start);
+    auto last = last_default ? (stride > 0 ? length : -1) : bounded_integer(end);
     if (!first_default && first < 0) first += length;
     if (!last_default && last < 0) last += length;
     if (stride > 0) {
@@ -266,9 +288,9 @@ static Value builtin(const std::string& name, const std::vector<Value>& args) {
     }
     if (name == "range") {
         if (args.empty() || args.size() > 3) throw std::runtime_error("range() expects one to three arguments");
-        auto start = args.size() == 1 ? 0 : integer(args[0]);
+        auto start = args.size() == 1 ? Integer{0} : integer(args[0]);
         auto stop = args.size() == 1 ? integer(args[0]) : integer(args[1]);
-        auto step = args.size() == 3 ? integer(args[2]) : 1;
+        auto step = args.size() == 3 ? integer(args[2]) : Integer{1};
         if (step == 0) throw std::runtime_error("range() step cannot be zero");
         List result;
         if (step > 0) for (auto i = start; i < stop; i += step) result.emplace_back(i);
@@ -284,13 +306,16 @@ static Value builtin(const std::string& name, const std::vector<Value>& args) {
         const auto& data = args[0].data;
         if (std::holds_alternative<std::monostate>(data)) return Value("NoneType");
         if (std::holds_alternative<bool>(data)) return Value("bool");
-        if (std::holds_alternative<std::int64_t>(data)) return Value("int");
+        if (std::holds_alternative<Integer>(data)) return Value("int");
         if (std::holds_alternative<double>(data)) return Value("float");
         if (std::holds_alternative<std::string>(data)) return Value("str");
         if (std::holds_alternative<ListPtr>(data)) return Value("list");
         return Value("dict");
     }
     throw std::runtime_error("unknown builtin `" + name + "`");
+}
+static Value integer_literal(const std::string& value) {
+    return Value(Integer(value));
 }
 "#;
 
@@ -447,7 +472,7 @@ fn expression_code(expression: &Expr) -> String {
         ExprKind::None => "Value()".into(),
         ExprKind::Bool(value) => format!("Value({value})"),
         ExprKind::Number(value) if value.contains('.') => format!("Value({value})"),
-        ExprKind::Number(value) => format!("Value(static_cast<std::int64_t>({value}))"),
+        ExprKind::Number(value) => format!("integer_literal({})", cpp_string(value)),
         ExprKind::String(value) => format!("Value({})", cpp_string(value)),
         ExprKind::Name(name) => format!("get(env, {})", cpp_string(name)),
         ExprKind::List(items) => format!(
