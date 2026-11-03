@@ -36,7 +36,8 @@ To install the release binary to `/usr/local/bin/pyra`, run:
 ./scripts/install.sh
 ```
 
-The installer may use `sudo` to write to `/usr/local/bin`. For development, run the compiler without installing it:
+The installer may use `sudo` to write to `/usr/local/bin`.
+For development, run the compiler without installing it:
 
 ```sh
 cargo run -- examples/hello.pyra -o out/hello
