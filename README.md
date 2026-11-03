@@ -1,8 +1,6 @@
 # Pyra
 
-<p align="center">
-  <img src="icons/Pyra-Logo.png" alt="Pyra logo" width="220">
-</p>
+![Pyra logo](icons/Pyra-Logo.png)
 
 Pyra is a small, brace-delimited, Python-inspired compiled language. Its compiler is written in Rust and emits C++20; Clang or GCC then builds a standalone native executable. Compiled programs do not load or invoke the Pyra compiler, Python, or another interpreter.
 
